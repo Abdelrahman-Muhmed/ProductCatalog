@@ -5,7 +5,7 @@ namespace ProductCatalog_BLL.DTOs
 {
     public class ProductDto
 	{
-        //public int? Id { get; set; }
+        public int? Id { get; set; }
 		public int ProductId { get; set; }
 
 

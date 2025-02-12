@@ -28,5 +28,6 @@ namespace ProductCatalog_DAL.Prsistence.Data
         public DbSet<Products> Product { get; set; }
         public DbSet<ProductBrand> ProductBrand { get; set; }
         public DbSet<ProductCategory> ProductCategory { get; set; }
-    }
+	
+	}
 }

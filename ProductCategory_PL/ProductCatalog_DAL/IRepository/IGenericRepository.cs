@@ -5,7 +5,7 @@ namespace ProductCatalog_DAL.IRepository
     public interface IGenericRepository<T> where T : BaseEntity
     {
 
-        Task<T?> GetAsync(int id);
+        Task<T?> GetAsync(int? id);
         Task<IReadOnlyList<T>> GetAllAsync();
 
 		Task<T> AddAsync(T entity);

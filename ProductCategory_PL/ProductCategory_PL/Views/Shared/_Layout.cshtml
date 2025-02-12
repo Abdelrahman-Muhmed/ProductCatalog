@@ -7,11 +7,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>@ViewData["Title"] - ProductCatalog</title>
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+	
+<link href="~/lib/bootstrap/dist/js/datatables.min.css" rel="stylesheet" />
+<link href="~/css/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+<link href="~/css/toastr.js/toastr.min.css" rel="stylesheet" />
 	<!-- DataTables -->
 
-	<link href="~/css/datatables.net-bs4/datatables.bootstrap4.min.css" rel="stylesheet" />
+@* 	<link href="~/css/datatables.net-bs4/datatables.bootstrap4.min.css" rel="stylesheet" />
 	<link href="~/css/datatables.net-buttons-bs/buttons.bootstrap.css" rel="stylesheet" />
-	<link href="~/css/datatables.net-responsive-bs/responsive.bootstrap.min.css" rel="stylesheet" />
+	<link href="~/css/datatables.net-responsive-bs/responsive.bootstrap.min.css" rel="stylesheet" /> *@
 	@* <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /> *@
 	<style>
 		:root {
@@ -76,6 +81,7 @@
 			.menu-link:hover,
 			.menu-item.active .menu-link {
 				background-color: var(--secondary-color);
+				color: white;
 			}
 
 		.menu-icon {
@@ -129,6 +135,7 @@
 			font-size: 1rem;
 			font-weight: bold;
 		}
+	
 	</style>
 </head>
 <body>
@@ -136,6 +143,8 @@
 		@{
 			TempData.Keep();
 			string? currentPage = ViewContext.HttpContext.Request.Path;
+		    string userName = User.Identity.IsAuthenticated ? User.Identity.Name : "";
+
 		}
 
 		<div class="dashboard">
@@ -158,31 +167,26 @@
 									<div>Products Home</div>
 								</a>
 							</li>
-							<li class="menu-item @(currentPage == "/product/Add" ? "active" : "")">
-								<a asp-controller="product" asp-action="Add" class="menu-link">
+							<li class="menu-item @(currentPage == "/product/AddUpdate" ? "active" : "")">
+								<a asp-controller="product" asp-action="AddUpdate" class="menu-link">
 									<div>Add Products</div>
 								</a>
 							</li>
 						</ul>
 					</li>
-					@if (User.Identity.IsAuthenticated)
-					{
+
 						<li class="menu-item">
 							<form method="post" action="@Url.Action("Logout", "Auth")">
-								<button type="submit" class="menu-link btn btn-link" style="padding: 0;">Logout</button>
+								<button type="submit" class="menu-link p-3 btn btn-link" style="padding: 0;">Logout</button>
 							</form>
 						</li>
-					}
 				</ul>
 			</aside>
 			<main class="content">
 				<header class="content-header">
-					<h2 id="view-title">Dashboard Overview</h2>
+					<h2 id="view-title">Product Dashboard</h2>
 					<div class="user-menu">
-						@if (User.Identity.IsAuthenticated)
-						{
-							<span class="user-name">@User.Identity.Name</span>
-						}
+							<span class="user-name text-primary" id="userNameId">Hello @userName !</span>
 					</div>
 				</header>
 				<div id="view-content">
@@ -193,16 +197,23 @@
 			</main>
 		</div>
 	</header>
-
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 	<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-@* 	<script src="~/css/datatable/js/datatable.jquery.min.js"></script> *@
-@* 	<script src="~/css/datatables.net-bs4/datatables.bootstrap4.min.js"></script>
-	<script src="~/lib/bootstrap/dist/js/datatables.net-responsive/datatables.responsive.min.js"></script>
-	<script src="~/css/datatables.net-responsive-bs/responsive.bootstrap.min.js"></script> *@
 
-	<script src="~/js/site.js" asp-append-version="true"></script>
+	<script src="~/css/datatable/js/datatable.jquery.min.js"></script>
+	<script src="~/css/datatables.net-buttons/js/datatables.buttons.min.js"></script>
+	<script src="~/css/datatables.net-bs4/datatables.bootstrap4.min.js"></script>
+	<script src="~/css/sweetalert2/sweetalert2.all.min.js"></script>
+	<script src="~/css/sweetalert2/sweetalert2.esm.all.min.js"></script>
+	<script src="~/css/sweetalert2/sweetalert2.esm.min.js"></script>
+	<script src="~/css/sweetalert2/sweetalert2.min.js"></script>
+	<script src="~/css/toastr.js/toastr.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/datatables.min.js"></script>
+	<script src="~/js/products.js"></script>
+
+@* 	<script src="~/js/site.js" asp-append-version="true"></script> *@
 	@* @await RenderSectionAsync("Scripts", required: false) *@
 
 

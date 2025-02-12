@@ -9,35 +9,30 @@ using System.Data;
 using System.Security.Claims;
 namespace ProductCatalog_PL.Controllers
 {
-    public class productController : Controller
+	public class productController : Controller
 	{
 		private readonly IMapper _mapper;
-		private readonly IProductService _productService;
 		private readonly IGenericRepository<Products> _genericRepository;
 		private readonly IGenericRepository<ProductCategory> _genericCategoryRepository;
 		private readonly IGenericRepository<ProductBrand> _genericBrandRepository;
-
 		private readonly IProductRepo _productRepo;
-		public productController (IProductRepo productRepo, IMapper mapper, IProductService productService, IGenericRepository<Products> genericRepository, IGenericRepository<ProductCategory> genericCategoryRepository, IGenericRepository<ProductBrand> genericBrandRepository)
+		public productController( IMapper mapper, IProductRepo productRepo, IGenericRepository<Products> genericRepository, IGenericRepository<ProductCategory> genericCategoryRepository, IGenericRepository<ProductBrand> genericBrandRepository)
 		{
 			_mapper = mapper;
-			_productService = productService;
 			_genericRepository = genericRepository;
-            _productRepo = productRepo;
+			_productRepo = productRepo;
 			_genericCategoryRepository = genericCategoryRepository;
-            _genericBrandRepository = genericBrandRepository;
+			_genericBrandRepository = genericBrandRepository;
 
 		}
 		public IActionResult Home()
 		{
 			return View();
-			
-		}
 
-     
+		}
 		public IActionResult GetAll()
 		{
-
+			//using Repository for products to get all products with specific columns
 			var dataRows = _productRepo.GetAllProductsAsync();
 			return Json(new { data = dataRows });
 		}
@@ -46,7 +41,8 @@ namespace ProductCatalog_PL.Controllers
 		[HttpGet("{id}")]
 		public async Task<ActionResult<ProductReturnDto>> GetProductAsync(int id)
 		{
-			var product = await _productService.GetProductAsync(id);
+			//using Repository for products to get all products with specific columns
+			var product = await _productRepo.GetAsync(id);
 			if (product == null)
 				return NotFound();
 			var ProductMapp = _mapper.Map<Products, ProductReturnDto>(product);
@@ -54,123 +50,152 @@ namespace ProductCatalog_PL.Controllers
 
 		}
 
-
 		[HttpGet]
-		public async Task<IActionResult> Add()
+		public async Task<IActionResult> AddUpdate(int? id)
 		{
-            //var selecCategorytListItems = await _genericCategoryRepository.GetAllAsync<ProductCategory>();
-            //ViewData["BrandId"] = new SelectList(selecCategorytListItems, "Id", "Name");
+			ProductDto productDto = new ProductDto();
+			if (id != null)
+			{
 
-            var selecBrandtListItems = await _productService.GetProductBrandAsync();
-            ViewData["CategoryId"] = new SelectList(selecBrandtListItems, "Id", "Name");
+				//using Repository for products to get all products with specific columns
+				var product = await _productRepo.GetAsync(id);
+				if (product == null)
+				{
+					return NotFound("Product not found.");
+				}
+				if (product.ProductCategory != null && product.ProductBrand != null)
+				{
+					productDto = _mapper.Map<ProductDto>(product);
+					productDto.Id = id;
+					var selecCategorytListItemsUp = await _genericCategoryRepository.GetAllAsync();
+					ViewData["BrandId"] = new SelectList(selecCategorytListItemsUp, "Id", "Name", product.ProductCategory.Name);
 
-            return View(new ProductDto());
+					var selecBrandtListItemsUp = await _genericBrandRepository.GetAllAsync();
+					ViewData["CategoryId"] = new SelectList(selecBrandtListItemsUp, "Id", "Name", product.ProductBrand.Name);
+				}
+
+
+
+			}
+			else
+			{
+				var selecCategorytListItems = await _genericCategoryRepository.GetAllAsync();
+				ViewData["BrandId"] = new SelectList(selecCategorytListItems, "Id", "Name");
+
+				var selecBrandtListItems = await _genericBrandRepository.GetAllAsync();
+				ViewData["CategoryId"] = new SelectList(selecBrandtListItems, "Id", "Name");
+			}
+
+			return View(productDto);
 		}
 
-        [HttpPost]
-        public async Task<IActionResult> Add(ProductDto productDto)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    // Save the file and get its path
-                    string filePath = null;
-                    if (productDto.ImageFile != null && productDto.ImageFile.Length > 0)
-                    {
-                        string uploadsFolder = Path.Combine("wwwroot", "uploads");
-                        if (!Directory.Exists(uploadsFolder))
-                        {
-                            Directory.CreateDirectory(uploadsFolder);
-                        }
+		[HttpPost]
+		public async Task<IActionResult> AddUpdate(ProductDto productDto)
+		{
+			if (ModelState.IsValid)
+			{
 
-                        filePath = Path.Combine(uploadsFolder, Guid.NewGuid() + Path.GetExtension(productDto.ImageFile.FileName));
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await productDto.ImageFile.CopyToAsync(stream);
-                        }
-                    }
-
-                    // Map DTO to entity
-                    Products product = _mapper.Map<Products>(productDto);
-                    product.PictureUrl = filePath;
-					product.creationDate = DateTime.Now;
-
-                    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-					if(userId != null)
+				try
+				{
+					// Save the file and get its path
+					string filePath = null;
+					if (productDto.Id != null)
 					{
-						product.createdBy = int.Parse(userId);
-
-                    }
-
-                    // Save to database
-                    await _genericRepository.AddAsync(product);
-                    return RedirectToAction(nameof(Index));
-                }
-                catch
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while adding");
-                }
-            }
-            return BadRequest("Invalid data");
-        }
-
-        //[HttpPut]
-        //public async Task<IActionResult> Update(ProductDto productDto)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            var product = await _productService.GetProductAsync();
-        //            if (product == null)
-        //            {
-        //                return NotFound("Product not found.");
-        //            }
-
-                  
-        //            string filePath = product.PictureUrl; 
-        //            if (productDto.ImageFile != null && productDto.ImageFile.Length > 0)
-        //            {
-        //                string uploadsFolder = Path.Combine("wwwroot", "uploads");
-        //                if (!Directory.Exists(uploadsFolder))
-        //                {
-        //                    Directory.CreateDirectory(uploadsFolder);
-        //                }
-
-        //                filePath = Path.Combine(uploadsFolder, Guid.NewGuid() + Path.GetExtension(productDto.ImageFile.FileName));
-        //                using (var stream = new FileStream(filePath, FileMode.Create))
-        //                {
-        //                    await productDto.ImageFile.CopyToAsync(stream);
-        //                }
-        //            }
-
-        //            product = _mapper.Map(productDto, product);
-        //            product.PictureUrl = filePath;  
-        //            product.UpdateDate = DateTime.Now;  
-
-        //            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //            if (userId != null)
-        //            {
-        //                product.UpdatedBy = int.Parse(userId);
-        //            }
-
-        //            // Save the updated product to the database
-        //            await _genericRepository.UpdateAsync(product);
-
-        //            return Ok("Update Successfully");
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while updating: {ex.Message}");
-        //        }
-        //    }
-
-        //    return BadRequest("Invalid Data");
-        //}
+						var product = await _productRepo.GetAsync(productDto.Id);
+						if (product == null)
+						{
+							return NotFound("Product not found.");
+						}
 
 
-        [HttpPost]
+						filePath = product.PictureUrl;
+						if (productDto.ImageFile != null && productDto.ImageFile.Length > 0)
+						{
+							string uploadsFolder = Path.Combine("wwwroot", "uploads");
+							if (!Directory.Exists(uploadsFolder))
+							{
+								Directory.CreateDirectory(uploadsFolder);
+							}
+
+							filePath = Path.Combine(uploadsFolder, Guid.NewGuid() + Path.GetExtension(productDto.ImageFile.FileName));
+							using (var stream = new FileStream(filePath, FileMode.Create))
+							{
+								await productDto.ImageFile.CopyToAsync(stream);
+							}
+						}
+
+						product = _mapper.Map(productDto, product);
+						product.PictureUrl = filePath;
+						product.creationDate = DateTime.Now;
+
+						var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+						if (userId != null)
+						{
+							product.createdBy = int.Parse(userId);
+						}
+
+						await _genericRepository.UpdateAsync(product);
+
+						return Ok("Update Successfully");
+					}
+					else
+					{
+
+						if (productDto.ImageFile != null && productDto.ImageFile.Length > 0)
+						{
+							string uploadsFolder = Path.Combine("wwwroot", "uploads");
+							if (!Directory.Exists(uploadsFolder))
+							{
+								Directory.CreateDirectory(uploadsFolder);
+							}
+
+							filePath = Path.Combine(uploadsFolder, Guid.NewGuid() + Path.GetExtension(productDto.ImageFile.FileName));
+							using (var stream = new FileStream(filePath, FileMode.Create))
+							{
+								await productDto.ImageFile.CopyToAsync(stream);
+							}
+						}
+
+						// Map DTO to entity
+						Products product = _mapper.Map<Products>(productDto);
+						product.PictureUrl = filePath;
+						product.creationDate = DateTime.Now;
+
+						var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+						if (userId != null)
+						{
+							product.createdBy = int.Parse(userId);
+
+						}
+
+						// Save to database
+						await _genericRepository.AddAsync(product);
+						return RedirectToAction(nameof(Index));
+					}
+
+				}
+				catch
+				{
+					return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while adding");
+				}
+			}
+			return BadRequest("Invalid data");
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> Details(int? id)
+		{
+			var product = await _productRepo.GetAsync(id);
+			if (product == null)
+			{
+				return NotFound("Product not found.");
+			}
+			var ProductMapp = _mapper.Map<Products, ProductReturnDto>(product);
+			return View(ProductMapp);
+
+		}
+
+		[HttpPost]
 		public async Task<IActionResult> Delete(int id)
 		{
 			if (ModelState.IsValid)

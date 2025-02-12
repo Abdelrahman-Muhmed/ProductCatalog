@@ -11,8 +11,7 @@ namespace ProductCatalog_DAL.IRepository
 	public interface IProductRepo
 	{
 		Task<IReadOnlyList<Products>> GetAllProductsAsync();
-		Task<IReadOnlyList<ProductCategory>> GetAllProductBrandsAsync();
-		Task<IReadOnlyList<ProductBrand>> GetAllProductCategoryAsync();
+		Task<Products?> GetAsync(int? id);
 
 	}
 }

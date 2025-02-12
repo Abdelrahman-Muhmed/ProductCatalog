@@ -10,6 +10,8 @@ using ProductCatalog_DAL.IRepository;
 using ProductCatalog_DAL.Models.IdentityModel;
 using ProductCatalog_DAL.Models.Product;
 using ProductCatalog_DAL.Prsistence.Data;
+using ProductCatalog_DAL.Prsistence.Data.DataSeeding;
+using ProductCatalog_DAL.Prsistence.Data.UserDataSeeding;
 using ProductCatalog_DAL.Prsistence.Repository;
 using ProductCatalog_DAL.Repository;
 using ProductCatalog_Service.ServiceRepo;
@@ -39,6 +41,9 @@ builder.Services.AddDbContext<ProductContext>(options =>
 builder.Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
 builder.Services.AddScoped(typeof(IProductService), typeof(ProductServic));
 builder.Services.AddScoped(typeof(IGenericRepository<Products>), typeof(GenericRepository<Products>));
+builder.Services.AddScoped(typeof(IGenericRepository<ProductBrand>), typeof(GenericRepository<ProductBrand>));
+builder.Services.AddScoped(typeof(IGenericRepository<ProductCategory>), typeof(GenericRepository<ProductCategory>));
+
 builder.Services.AddScoped(typeof(IProductRepo), typeof(ProductRepo));
 
 
@@ -47,6 +52,10 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>()
     .AddEntityFrameworkStores<ProductContext>()
     .AddDefaultTokenProviders();
 
+// Configure Identity to use custom ApplicationUser and ApplicationRole with int keys
+//builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options => options.SignIn.RequireConfirmedAccount = true)
+//    .AddEntityFrameworkStores<ProductContext>()
+//    .AddDefaultTokenProviders();
 //For IAuthService 
 builder.Services.AddScoped(typeof(IAuthServic), typeof(AuthService));
 
@@ -107,13 +116,48 @@ Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(configuration)
     .WriteTo.Console()
     .WriteTo.MSSqlServer(connectionString: configuration.GetConnectionString("DefaultConnection"),
     sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs", AutoCreateSqlTable = true, AutoCreateSqlDatabase = true })
-    .WriteTo.Seq("http://localhost:5341/")
+    .WriteTo.Seq("http://localhost:7063/")
     .CreateLogger();
 
 builder.Host.UseSerilog();
 
 #endregion
+
+
 var app = builder.Build();
+
+#region Seeding Data 
+//Ask CLR For Creating Object From DBContext 
+using var scope = app.Services.CreateScope();
+
+var services = scope.ServiceProvider;
+var dbContext = services.GetRequiredService<ProductContext>();
+var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
+
+
+var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+
+try
+{
+
+    // Migrate Data 
+    await dbContext.Database.MigrateAsync();
+    // Seeding Data To Make Admin User 
+    var userId = await UserSeeding.UserDataSeeding(userManager, roleManager);
+    if (userId.HasValue)
+    {
+        var creationDate = DateTime.UtcNow;
+        await ProductsSeeding.SeedAsync(dbContext, userId.Value, creationDate);
+    }
+}
+catch (Exception ex)
+{
+    var logger = loggerFactory.CreateLogger<Program>();
+    logger.LogError(ex, "An error happened during migration");
+}
+#endregion
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

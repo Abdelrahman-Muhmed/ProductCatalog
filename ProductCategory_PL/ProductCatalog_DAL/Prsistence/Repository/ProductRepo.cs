@@ -27,36 +27,19 @@ namespace ProductCatalog_DAL.Prsistence.Repository
 				.Include(x => x.ProductCategory)
 				.AsNoTracking()
 				.ToListAsync();
-
-	
 			return products;
 		
-		
 		}
 
-
-		public async Task<IReadOnlyList<ProductBrand>> GetAllProductBrandsAsync()
+		public async Task<Products?> GetAsync(int? id)
 		{
-			var productBrand = await _dbContext.Set<ProductBrand>().ToListAsync();
-
-			return productBrand;
-		}
-
-		public async Task<IReadOnlyList<ProductCategory>> GetAllProductCategoryAsync()
-		{
-			var productCategory = await _dbContext.Set<ProductCategory>().ToListAsync();
-
-			return productCategory;
-		}
-
-		Task<IReadOnlyList<ProductCategory>> IProductRepo.GetAllProductBrandsAsync()
-		{
-			throw new NotImplementedException();
-		}
-
-		Task<IReadOnlyList<ProductBrand>> IProductRepo.GetAllProductCategoryAsync()
-		{
-			throw new NotImplementedException();
+			var product = await _dbContext.Set<Products>()
+				.Include(x => x.ProductBrand)
+				.Include(x => x.ProductCategory)
+				.Where(x => x.Id == id)
+				.FirstOrDefaultAsync();
+				
+			return product;
 		}
 	}
 }

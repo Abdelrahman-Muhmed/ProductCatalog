@@ -18,7 +18,7 @@ namespace ProductCatalog_DAL.Repository
             return await _dbContext.Set<T>().AsNoTracking().ToListAsync();
         }
 
-        public async Task<T?> GetAsync(int id)
+        public async Task<T?> GetAsync(int? id)
         {
             return await _dbContext.Set<T>().FindAsync(id);
         }

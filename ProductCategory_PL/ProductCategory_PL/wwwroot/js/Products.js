@@ -1,5 +1,5 @@
 ﻿document.addEventListener("DOMContentLoaded", InitializeDatatable);
-
+//For Display Data 
 function InitializeDatatable() {
     var table = $('#kt_datatable');
 
@@ -7,6 +7,8 @@ function InitializeDatatable() {
         responsive: true,
         processing: true,
         serverSide: false,
+        pageLength: 10,
+        pagination: true,
         dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
             "<'row'<'col-sm-12'tr>>" +
             "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
@@ -54,18 +56,18 @@ function InitializeDatatable() {
                 title: 'Actions',
                 orderable: false,
                 render: function (data, type, row) {
-                    console.log(row)
                     return `
-                            <div class="btn-group">
-                                <a href="/Complaint/Edit/${row.Id}" class="btn btn-sm btn-primary" title="Edit">
-                                    Update
-                                </a>
-
-                                <a href="javascript:void(0);" onclick="deleteRow('${row.id}')" class="btn btn-sm btn-danger" title="Delete">
-                                    
-                                    Delete
-                                </a>
-                            </div>
+                           <div class="btn-group" role="group" aria-label="Actions">
+                            <a href="/product/AddUpdate/${row.id}" class="btn btn-sm btn-primary" title="Update">
+                                <i class="fas fa-edit"></i> Update
+                            </a>
+                            <a href="javascript:void(0);" onclick="deleteRow('${row.id}')" class="btn btn-sm btn-danger" title="Delete">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </a>
+                            <a href="/product/Details/${row.id}" class="btn btn-sm btn-warning" title="Details">
+                                <i class="fas fa-info-circle"></i> Details
+                            </a>
+                        </div>
                         `;
                 }
             }
@@ -80,9 +82,7 @@ function InitializeDatatable() {
 
 
 
-
-
-
+//For Delete Product
 function deleteRow(id) {
     Swal.fire({
         title: 'Product Delete',
