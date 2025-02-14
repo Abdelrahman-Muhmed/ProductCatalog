@@ -1,0 +1,94 @@
+﻿ @model ProductCatalog_BLL.DTOs.RegisterDto;
+@{
+	Layout = null;
+	ViewData["Title"] = "Register Basic - Pages";
+}
+<head>
+	<link href="~/lib/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link href="~/css/style.css" rel="stylesheet" />
+</head>
+
+
+<div class="wrapper">
+	<div class="inner">
+		<div class="image-holder">
+			<img src="~/images/login&register/registration-form-1.jpg" />
+		</div>
+		<form asp-controller="Auth" asp-action="Register" method="post">
+			<h3>Registration Form</h3>
+			<div class="form-group">
+				<input type="text" placeholder="First Name"  class="form-control" asp-for="firstName">
+				<input type="text" placeholder="Last Name" class="form-control"  asp-for="lastName">
+			</div>
+			<div >
+				<span asp-validation-for="firstName" class="text-danger"></span>
+			</div>
+			<div>
+				<span asp-validation-for="lastName" class="text-danger" ></span>
+			</div>
+			
+			<div class="form-wrapper">
+				<input type="text" placeholder="Phone Number" class="form-control" asp-for="phoneNumber">
+				<span asp-validation-for="phoneNumber" class="text-danger"></span>
+			</div>
+			<div class="mb-2">
+				<span asp-validation-for="phoneNumber" class="text-danger"></span>
+			</div>
+
+			<div class="form-wrapper">
+				<input type="text" placeholder="Email Address" class="form-control" asp-for="Email">
+				<i class="zmdi zmdi-email"></i>
+			</div>
+			<div class="mb-2">
+				<span asp-validation-for="Email" class="text-danger"></span>
+			</div>
+			<div class="form-wrapper">
+				<select type="text" class="form-control" asp-for="Role">
+					<option value="" disabled selected>Role</option>
+					<option value="Student">Student</option>
+					<option value="Instructor">Instructor</option>
+					<option value="Admine">Admine</option>
+				</select>
+				<span asp-validation-for="Role" class="text-danger"></span>
+				<i class="zmdi zmdi-caret-down" style="font-size: 17px"></i>
+			</div>
+		
+			<div class="form-wrapper">
+				<input type="password" placeholder="Password" class="form-control" asp-for="Password" />
+				<i class="zmdi zmdi-lock"></i>
+			</div>
+			<div class="mb-2">
+				<span asp-validation-for="Password" class="text-danger"></span>
+
+			</div>
+			<div class="form-wrapper">
+				<input type="password" placeholder="Confirm Password" class="form-control" asp-for="ConfirmPassword" />
+				<i class="zmdi zmdi-lock"></i>
+			</div>
+			<div class="mb-2">
+				<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+
+			</div>
+			<div class="form-group">
+				<input type="text" placeholder="Country" class="form-control" asp-for="country">
+				<input type="text" placeholder="City" class="form-control" asp-for="city">
+			</div>
+			<div>
+				<span asp-validation-for="country" class="text-danger"></span>
+			</div>
+			<div>
+				<span asp-validation-for="city" class="text-danger"></span>
+
+			</div>
+			<button>
+				Register
+				<i class="zmdi zmdi-arrow-right"></i>
+			</button>
+		</form>
+	</div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
