@@ -7,7 +7,6 @@ using ProductCatalog_BLL.Helpers.PictureResolver;
 using ProductCatalog_BLL.IService;
 using ProductCatalog_DAL.IRepository;
 using ProductCatalog_DAL.Models.IdentityModel;
-using ProductCatalog_DAL.Models.Product;
 using ProductCatalog_DAL.Prsistence.Data;
 using ProductCatalog_DAL.Repository;
 using ProductCatalog_Service.ServiceRepo;
@@ -20,8 +19,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-var app = builder.Build();
-
 #region Connection      
 //Injection For DataBase 
 builder.Services.AddDbContext<ProductContext>(options =>
@@ -33,8 +30,18 @@ builder.Services.AddDbContext<ProductContext>(options =>
 
 #region AlloW Depdancy Injection For Class 
 
+//builder.Services.AddScoped<IGenericRepository<Product>, GenericRepository<Product>>();
+//builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
 //For Unit Of Work So i dont need Make IGenericRepository 
 builder.Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
+
+
+
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//System.InvalidOperationException: 'No service for type Error From var ApplicationUserSeedingData = servies.GetRequiredService<UserManager<ApplictionUser>>();
+//    'Microsoft.AspNetCore.Identity.UserManager`1[Amazon_Core.Model.IdentityModel.ApplictionUser]' has been registered.'
 
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>()
@@ -43,11 +50,33 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>()
 
 //For IAuthService 
 builder.Services.AddScoped(typeof(IAuthServic), typeof(AuthService));
-builder.Services.AddScoped(typeof(IGenericRepository<Products>), typeof(GenericRepository<Products>));
-builder.Services.AddScoped(typeof(IProductService), typeof(ProductServic));
+
+//Injection For Add Autntication
+//Without this AddJwtBearer("Bearer") he give use the Invalid Opearations Error So I have know hime Whatg the Kind Of Schema 
+//Now i will add the valdiate for Claim What Come With Schema 
+//"Bearer" == JwtBearerDefaults.AuthenticationScheme
+//builder.Services.AddAuthentication(option =>
+//{
+//    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;       // For make this The Default in Any Endpoint Work With Authrization 
+//}
 
 
+//)
+//    .AddJwtBearer(option =>
+//       option.TokenValidationParameters = new TokenValidationParameters()
+//       {
+//           ValidateAudience = true,
+//           ValidAudience = builder.Configuration["JWT:audience"],
+//           ValidateIssuer = true,
+//           ValidIssuer = builder.Configuration["JWT:issure"],
+//           ValidateIssuerSigningKey = true,
+//           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:AuthKey"] ?? string.Empty)),
+//           ValidateLifetime = true,
+//           ClockSkew = TimeSpan.Zero
+//       } //The defualt handler for Bearer Schema 
 
+//    );
 
 builder.Services.AddCors(e => e.AddPolicy("Policy", e => e.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
@@ -86,11 +115,12 @@ builder.Services.AddAuthentication(options =>
 #endregion
 
 #region Auto Mapping 
-
+//builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfile()));
+//builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+// Register AutoMapper and PictureUrlResolver
 builder.Services.AddAutoMapper(typeof(Program));
-
 builder.Services.AddSingleton<PictureUrlResolver>();
 
 #endregion
@@ -110,6 +140,7 @@ Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(configuration)
 builder.Host.UseSerilog();
 
 #endregion
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -123,11 +154,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseCors("Policy");
+
 app.UseAuthentication();
+
 app.UseAuthorization();
-
-
+app.UseCors("Policy");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
