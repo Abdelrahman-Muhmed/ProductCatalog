@@ -6,7 +6,10 @@ namespace ProductCatalog_BLL.DTOs
     public class ProductDto
 	{
         //public int? Id { get; set; }
-        [Required(ErrorMessage = "Name is required.")]
+		public int ProductId { get; set; }
+
+
+		[Required(ErrorMessage = "Name is required.")]
 		[StringLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
 		public string Name { get; set; } = null!;
 
@@ -16,7 +19,7 @@ namespace ProductCatalog_BLL.DTOs
 
 		//[Required(ErrorMessage = "Picture URL is required.")]
 		//[Url(ErrorMessage = "Picture URL must be a valid URL.")]
-		//public string PictureUrl { get; set; } = null!;
+		//public string? PictureUrl { get; set; } = null!;
 
 		[Required(ErrorMessage = "Price is required.")]
 		public decimal Price { get; set; }

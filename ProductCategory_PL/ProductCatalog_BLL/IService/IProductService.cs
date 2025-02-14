@@ -9,8 +9,8 @@ namespace ProductCatalog_BLL.IService
 		Task<IReadOnlyList<ProductBrand>> GetProductBrandAsync();
 		Task<IReadOnlyList<ProductCategory>> GetProductCategoryAsync();
 
-		
 
+	     Task<IEnumerable<object>> GetAllProductsTransformedAsync();
 
 	}
 }

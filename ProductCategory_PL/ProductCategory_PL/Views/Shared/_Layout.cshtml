@@ -1,61 +1,212 @@
-﻿<!DOCTYPE html>
+﻿
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ProductCategory_PL</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ProductCategory_PL.styles.css" asp-append-version="true" />
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - ProductCatalog</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<!-- DataTables -->
+
+	<link href="~/css/datatables.net-bs4/datatables.bootstrap4.min.css" rel="stylesheet" />
+	<link href="~/css/datatables.net-buttons-bs/buttons.bootstrap.css" rel="stylesheet" />
+	<link href="~/css/datatables.net-responsive-bs/responsive.bootstrap.min.css" rel="stylesheet" />
+	@* <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /> *@
+	<style>
+		:root {
+			--primary-color: #4361ee;
+			--secondary-color: #3f37c9;
+			--accent-color: #4cc9f0;
+			--background-color: #f0f2f5;
+			--text-color: #333;
+			--sidebar-width: 250px;
+		}
+
+		body {
+			font-family: "Poppins", sans-serif;
+			margin: 0;
+			padding: 0;
+			color: var(--text-color);
+			background-color: var(--background-color);
+		}
+
+		.dashboard {
+			display: grid;
+			grid-template-columns: var(--sidebar-width) 1fr;
+			height: 100vh;
+		}
+
+		#layout-menu {
+			background-color: var(--primary-color);
+			color: white;
+			padding: 2rem 1rem;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.menu-header {
+			font-size: 1.25rem;
+			font-weight: bold;
+			margin-bottom: 1rem;
+			text-transform: uppercase;
+		}
+
+		.menu-inner {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+
+		.menu-item {
+			margin-bottom: 0.5rem;
+		}
+
+		.menu-link {
+			display: flex;
+			align-items: center;
+			text-decoration: none;
+			padding: 0.75rem;
+			border-radius: 8px;
+			color: white;
+			font-size: 1rem;
+			transition: all 0.3s ease;
+		}
+
+			.menu-link:hover,
+			.menu-item.active .menu-link {
+				background-color: var(--secondary-color);
+			}
+
+		.menu-icon {
+			margin-right: 0.75rem;
+			font-size: 1.25rem;
+		}
+
+		.menu-sub {
+			margin-left: 1.5rem;
+		}
+
+		.container {
+			padding: 2rem;
+		}
+
+		/* Header and Content Styling */
+		.content {
+			display: flex;
+			flex-direction: column;
+			padding: 2rem;
+		}
+
+		.content-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 2rem;
+			border-bottom: 1px solid var(--accent-color);
+			padding-bottom: 1rem;
+		}
+
+			.content-header h2 {
+				font-size: 1.75rem;
+				margin: 0;
+			}
+
+		.user-menu {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		.user-avatar {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			object-fit: cover;
+		}
+
+		.user-name {
+			font-size: 1rem;
+			font-weight: bold;
+		}
+	</style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ProductCategory_PL</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="product" asp-action="Index">Products Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="product" asp-action="Add">Add Products</a>
-                        </li>
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="menu-item">
-                                <h3>@User.Identity.Name</h3>
-                                <form method="post" action="@Url.Action("Logout", "Auth")">
-                                    <button type="submit" class="menu-link btn btn-link" style="padding: 0;">Logout</button>
-                                </form>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+	<header>
+		@{
+			TempData.Keep();
+			string? currentPage = ViewContext.HttpContext.Request.Path;
+		}
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - ProductCategory_PL - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+		<div class="dashboard">
+			<aside id="layout-menu">
+				<ul class="menu-inner">
+					<li class="menu-header">Product Catalog</li>
+					<li class="menu-item @(currentPage.StartsWith("/Home/Index") ? "active open" : "")">
+						<a href="javascript:void(0);" class="menu-link menu-toggle">
+							<i class="menu-icon bx bx-chalkboard"></i>
+							<div>Products</div>
+						</a>
+						<ul class="menu-sub">
+							<li class="menu-item @(currentPage == "/Home/Index" ? "active" : "")">
+								<a asp-controller="Home" asp-action="Index" class="menu-link">
+									<div>Home</div>
+								</a>
+							</li>
+							<li class="menu-item @(currentPage == "/product/Home" ? "active" : "")">
+								<a asp-controller="product" asp-action="Home" class="menu-link">
+									<div>Products Home</div>
+								</a>
+							</li>
+							<li class="menu-item @(currentPage == "/product/Add" ? "active" : "")">
+								<a asp-controller="product" asp-action="Add" class="menu-link">
+									<div>Add Products</div>
+								</a>
+							</li>
+						</ul>
+					</li>
+					@if (User.Identity.IsAuthenticated)
+					{
+						<li class="menu-item">
+							<form method="post" action="@Url.Action("Logout", "Auth")">
+								<button type="submit" class="menu-link btn btn-link" style="padding: 0;">Logout</button>
+							</form>
+						</li>
+					}
+				</ul>
+			</aside>
+			<main class="content">
+				<header class="content-header">
+					<h2 id="view-title">Dashboard Overview</h2>
+					<div class="user-menu">
+						@if (User.Identity.IsAuthenticated)
+						{
+							<span class="user-name">@User.Identity.Name</span>
+						}
+					</div>
+				</header>
+				<div id="view-content">
+
+					@RenderBody()
+		
+				</div>
+			</main>
+		</div>
+	</header>
+
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+	<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+@* 	<script src="~/css/datatable/js/datatable.jquery.min.js"></script> *@
+@* 	<script src="~/css/datatables.net-bs4/datatables.bootstrap4.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/datatables.net-responsive/datatables.responsive.min.js"></script>
+	<script src="~/css/datatables.net-responsive-bs/responsive.bootstrap.min.js"></script> *@
+
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	@* @await RenderSectionAsync("Scripts", required: false) *@
+
+
 </body>
+
+
 </html>

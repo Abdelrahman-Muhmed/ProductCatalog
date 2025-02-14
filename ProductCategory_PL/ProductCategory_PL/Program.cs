@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ProductCatalog_BLL.Helpers.Mapping;
@@ -7,7 +8,9 @@ using ProductCatalog_BLL.Helpers.PictureResolver;
 using ProductCatalog_BLL.IService;
 using ProductCatalog_DAL.IRepository;
 using ProductCatalog_DAL.Models.IdentityModel;
+using ProductCatalog_DAL.Models.Product;
 using ProductCatalog_DAL.Prsistence.Data;
+using ProductCatalog_DAL.Prsistence.Repository;
 using ProductCatalog_DAL.Repository;
 using ProductCatalog_Service.ServiceRepo;
 using Serilog;
@@ -28,20 +31,16 @@ builder.Services.AddDbContext<ProductContext>(options =>
 
 #endregion
 
-#region AlloW Depdancy Injection For Class 
 
-//builder.Services.AddScoped<IGenericRepository<Product>, GenericRepository<Product>>();
-//builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+#region AlloW Depdancy Injection For Class 
 
 //For Unit Of Work So i dont need Make IGenericRepository 
 builder.Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
+builder.Services.AddScoped(typeof(IProductService), typeof(ProductServic));
+builder.Services.AddScoped(typeof(IGenericRepository<Products>), typeof(GenericRepository<Products>));
+builder.Services.AddScoped(typeof(IProductRepo), typeof(ProductRepo));
 
-
-
-
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-//System.InvalidOperationException: 'No service for type Error From var ApplicationUserSeedingData = servies.GetRequiredService<UserManager<ApplictionUser>>();
-//    'Microsoft.AspNetCore.Identity.UserManager`1[Amazon_Core.Model.IdentityModel.ApplictionUser]' has been registered.'
 
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>()
@@ -51,32 +50,6 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>()
 //For IAuthService 
 builder.Services.AddScoped(typeof(IAuthServic), typeof(AuthService));
 
-//Injection For Add Autntication
-//Without this AddJwtBearer("Bearer") he give use the Invalid Opearations Error So I have know hime Whatg the Kind Of Schema 
-//Now i will add the valdiate for Claim What Come With Schema 
-//"Bearer" == JwtBearerDefaults.AuthenticationScheme
-//builder.Services.AddAuthentication(option =>
-//{
-//    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;       // For make this The Default in Any Endpoint Work With Authrization 
-//}
-
-
-//)
-//    .AddJwtBearer(option =>
-//       option.TokenValidationParameters = new TokenValidationParameters()
-//       {
-//           ValidateAudience = true,
-//           ValidAudience = builder.Configuration["JWT:audience"],
-//           ValidateIssuer = true,
-//           ValidIssuer = builder.Configuration["JWT:issure"],
-//           ValidateIssuerSigningKey = true,
-//           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:AuthKey"] ?? string.Empty)),
-//           ValidateLifetime = true,
-//           ClockSkew = TimeSpan.Zero
-//       } //The defualt handler for Bearer Schema 
-
-//    );
 
 builder.Services.AddCors(e => e.AddPolicy("Policy", e => e.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 

@@ -24,8 +24,46 @@ namespace ProductCatalog_PL.Controllers
             _mapper = mapper;
         }
 
+		public IActionResult Register() => View(new RegisterDto());
 
-        public IActionResult Login() => View();
+
+		[HttpPost]
+		public async Task<IActionResult> Register(RegisterDto register)
+		{
+			if (!ModelState.IsValid)
+			{
+				return View(register);
+			}
+
+			var user = new ApplicationUser
+			{
+				Email = register.Email,
+				UserName = register.Email.Split('@')[0],
+				firstName = register.firstName,
+				lastName = register.lastName,
+				PhoneNumber = register.phoneNumber,
+				country = register.country,
+				city = register.city
+
+			};
+
+			var result = await _userManager.CreateAsync(user, register.Password);
+			//await _userManager.AddToRoleAsync(user, register.Role ?? "Admine");
+			if (!result.Succeeded)
+			{
+				foreach (var error in result.Errors)
+				{
+					ModelState.AddModelError(string.Empty, error.Description);
+				}
+				return View(register);
+			}
+
+			await _signInManager.SignInAsync(user, isPersistent: false);
+
+			return RedirectToAction("Index", "Home");
+		}
+
+		public IActionResult Login() => View();
 
 
         [HttpPost]
@@ -73,60 +111,22 @@ namespace ProductCatalog_PL.Controllers
         }
 
 
-        public IActionResult Register() => View(new RegisterDto());
+      
+        //[Authorize]
+        //[HttpGet("getUser")]
+        //public async Task<ActionResult<UserDto>> GetUserName()
+        //{
+        //    //The User Here Coming From ControllerBase 
+        //    var email = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
+        //    var user = await _userManager.FindByEmailAsync(email);
 
-
-        [HttpPost]
-        public async Task<IActionResult> Register(RegisterDto register)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(register);
-            }
-
-            var user = new ApplicationUser
-            {
-                Email = register.Email,
-                UserName = register.Email.Split('@')[0],
-                firstName = register.firstName,
-                lastName = register.lastName,
-                PhoneNumber = register.phoneNumber,
-                country = register.country,
-                city = register.city
-
-			};
-
-            var result = await _userManager.CreateAsync(user, register.Password);
-			//await _userManager.AddToRoleAsync(user, register.Role ?? "Admine");
-			if (!result.Succeeded)
-            {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-                return View(register);
-            }
-
-            await _signInManager.SignInAsync(user, isPersistent: false);
-
-            return RedirectToAction("Index", "Home");
-        }
-
-        [Authorize]
-        [HttpGet("getUser")]
-        public async Task<ActionResult<UserDto>> GetUserName()
-        {
-            //The User Here Coming From ControllerBase 
-            var email = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
-            var user = await _userManager.FindByEmailAsync(email);
-
-            return Ok(new UserDto()
-            {
-                Name = user.firstName,
-                Email = user.Email,
-                Token = await _authServic.CreateTokenAsync(user, _userManager)
-            });
-        }
+        //    return Ok(new UserDto()
+        //    {
+        //        Name = user.firstName,
+        //        Email = user.Email,
+        //        Token = await _authServic.CreateTokenAsync(user, _userManager)
+        //    });
+        //}
 
 
 		[HttpPost]

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProductCatalog_DAL.Prsistence.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class createDatabase : Migration
+    public partial class createdatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,21 +32,21 @@ namespace ProductCatalog_DAL.Prsistence.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    firstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    lastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    country = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    firstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    lastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    country = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     street = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     city = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PersonalImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -55,7 +55,7 @@ namespace ProductCatalog_DAL.Prsistence.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK__User__3214EC07C842DC7C", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -208,10 +208,8 @@ namespace ProductCatalog_DAL.Prsistence.Data.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    BrandId = table.Column<int>(type: "int", nullable: false),
-                    ProductBrandId = table.Column<int>(type: "int", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    ProductCategoryId = table.Column<int>(type: "int", nullable: false),
+                    BrandId = table.Column<int>(type: "int", nullable: true),
+                    CategoryId = table.Column<int>(type: "int", nullable: true),
                     creationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     createdBy = table.Column<int>(type: "int", nullable: true),
                     startDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -221,17 +219,15 @@ namespace ProductCatalog_DAL.Prsistence.Data.Migrations
                 {
                     table.PrimaryKey("PK_Product", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Product_ProductBrand_ProductBrandId",
-                        column: x => x.ProductBrandId,
+                        name: "FK_Product_ProductBrand_BrandId",
+                        column: x => x.BrandId,
                         principalTable: "ProductBrand",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Product_ProductCategory_ProductCategoryId",
-                        column: x => x.ProductCategoryId,
+                        name: "FK_Product_ProductCategory_CategoryId",
+                        column: x => x.CategoryId,
                         principalTable: "ProductCategory",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -274,14 +270,14 @@ namespace ProductCatalog_DAL.Prsistence.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Product_ProductBrandId",
+                name: "IX_Product_BrandId",
                 table: "Product",
-                column: "ProductBrandId");
+                column: "BrandId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Product_ProductCategoryId",
+                name: "IX_Product_CategoryId",
                 table: "Product",
-                column: "ProductCategoryId");
+                column: "CategoryId");
         }
 
         /// <inheritdoc />

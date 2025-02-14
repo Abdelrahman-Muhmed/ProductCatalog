@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "jquery@3.7.1",
+      "destination": "wwwroot/css/jquery/"
+    },
+    {
+      "library": "datatable@2.0.2",
+      "destination": "wwwroot/css/datatable/"
+    },
+    {
+      "library": "datatables.net@2.2.1",
+      "destination": "wwwroot/css/datatables.net/"
+    },
+    {
+      "library": "datatables.net-bs4@3.2.2",
+      "destination": "wwwroot/css/datatables.net-bs4/"
+    },
+    {
+      "library": "datatables.net-buttons@3.2.0",
+      "destination": "wwwroot/css/datatables.net-buttons/"
+    },
+    {
+      "library": "datatables.net-buttons-bs@3.2.0",
+      "destination": "wwwroot/css/datatables.net-buttons-bs/",
+      "files": [
+        "buttons.bootstrap.css"
+      ]
+    },
+    {
+      "library": "datatables.net-responsive-bs@3.0.3",
+      "destination": "wwwroot/css/datatables.net-responsive-bs/"
+    },
+    {
+      "library": "datatables.net-responsive@3.0.3",
+      "destination": "wwwroot/lib/bootstrap/dist/js/datatables.net-responsive/"
+    },
+    {
+      "library": "sweetalert2@11.15.10",
+      "destination": "wwwroot/css/sweetalert2/"
+    },
+    {
+      "library": "toastr.js@2.1.4",
+      "destination": "wwwroot/css/toastr.js/"
+    }
+  ]
+}
