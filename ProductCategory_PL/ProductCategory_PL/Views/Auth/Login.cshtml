@@ -1,0 +1,48 @@
+﻿ @model ProductCatalog_BLL.DTOs.LoginDto;
+@{
+	Layout = null;
+	ViewData["Title"] = "Login Basic - Pages";
+}
+<head>
+	<link href="~/lib/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link href="~/css/style.css" rel="stylesheet" />
+</head>
+
+
+<div class="wrapper">
+	<div class="inner">
+		<div class="image-holder">
+			<img src="~/images/login&register/registration-form-1.jpg" />
+		</div>
+		<form asp-controller="Auth" asp-action="Login" method="post">
+
+			<h3>Login</h3>
+			<div class="form-wrapper">
+				<input type="text" placeholder="Email Address" class="form-control" asp-for="Email">
+				<i class="zmdi zmdi-email"></i>
+			</div>
+			<div class="mb-2">
+				<span asp-validation-for="Email" class="text-danger"></span>
+			</div>
+
+			<div class="form-wrapper">
+				<input type="password" placeholder="Password" class="form-control" asp-for="PassWord" />
+				<i class="zmdi zmdi-lock"></i>
+			</div>
+			<div class="mb-2">
+				<span asp-validation-for="PassWord" class="text-danger"></span>
+			</div>
+			
+			
+			<button>
+				Login
+				<i class="zmdi zmdi-arrow-right"></i>
+			</button>
+		</form>
+	</div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

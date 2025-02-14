@@ -1,0 +1,82 @@
+﻿ @model ProductCatalog_BLL.DTOs.ProductDto;
+
+<div class="container my-5">
+    <div class="card shadow-lg rounded-4">
+        <div class="card-header bg-primary text-white text-center">
+            <h1 class="h3">Add Product</h1>
+        </div>
+        <div class="card-body"> 
+            <form asp-controller="product" asp-action="Add" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" asp-for="Name" class="form-control rounded-3" id="name" placeholder="Enter product name">
+                </div>
+                <div class="mb-2">
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-control rounded-3" asp-for="CategoryId" asp-items="@(ViewData["CategoryId"] as SelectList)">
+                        <option value="">-- Select Category --</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="brand" class="form-label">Brand</label>
+                    <select class="form-control rounded-3" asp-for="BrandId" asp-items="@(ViewData["BrandId"] as SelectList)">
+                        <option value="">-- Select Brand --</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <span asp-validation-for="BrandId" class="text-danger"></span>
+                </div>
+
+
+                <div class="mb-3">
+                    <label for="Price" class="form-label">Price</label>
+                    <input type="number" asp-for="Price" class="form-control rounded-3" id="PriceId" step="0.01" placeholder="Enter Price">
+                </div>
+                <div class="mb-2">
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Description" class="form-label">Description</label>
+                    <input type="text" asp-for="Description" class="form-control rounded-3" id="DescriptionId"  placeholder="Enter Description">
+                </div>
+                <div class="mb-2">
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="startDate" class="form-label">Start Date</label>
+                    <input type="date" asp-for="startDate" class="form-control rounded-3" id="startDate" >
+                </div>
+
+
+                <div class="mb-3">
+                    <label for="duration" class="form-label">Duration (days)</label>
+                    <input type="number" asp-for="Duration" class="form-control rounded-3" id="duration" placeholder="Enter duration in days" >
+                </div>
+                <div class="mb-3">
+                    <label for="image" class="form-label">Product Image</label>
+                    <input type="file" asp-for="ImageFile" class="form-control rounded-3" id="image" accept=".jpg,.jpeg,.png">
+                    <small class="form-text text-muted">Max file size: 1MB. Allowed formats: JPG, JPEG, PNG</small>
+                </div>
+                <div class="mb-2">
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 rounded-3">
+                    Add Product
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
