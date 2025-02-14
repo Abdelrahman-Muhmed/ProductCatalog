@@ -20,6 +20,11 @@ namespace ProductCatalog_DAL.Prsistence.Data
 
         }
 
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer("DefaultConnection");
+        //}
+
         public DbSet<Products> Product { get; set; }
         public DbSet<ProductBrand> ProductBrand { get; set; }
         public DbSet<ProductCategory> ProductCategory { get; set; }
