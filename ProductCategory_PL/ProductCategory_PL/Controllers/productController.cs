@@ -42,13 +42,13 @@ namespace ProductCatalog_PL.Controllers
 
 
         }
-
-        public IActionResult Home()
+		[Authorize(Roles = "Admin,Customer")]
+		public IActionResult Home()
         {
             return View();
 
         }
-        public IActionResult GetAll()
+		public IActionResult GetAll()
         {
             // Using Repository for products to get all products with specific columns
             var dataRows = _productRepo.GetAllProductsAsync();
