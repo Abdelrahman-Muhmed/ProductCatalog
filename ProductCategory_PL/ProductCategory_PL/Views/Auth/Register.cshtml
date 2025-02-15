@@ -13,7 +13,7 @@
 <div class="wrapper">
 	<div class="inner">
 		<div class="image-holder">
-			<img src="~/images/login&register/registration-form-1.jpg" />
+			<img src="~/images/login&register/white-chocolate-mocha.png" />
 		</div>
 		<form asp-controller="Auth" asp-action="Register" method="post">
 			<h3>Registration Form</h3>
@@ -46,9 +46,8 @@
 			<div class="form-wrapper">
 				<select type="text" class="form-control" asp-for="Role">
 					<option value="" disabled selected>Role</option>
-					<option value="Student">Student</option>
-					<option value="Instructor">Instructor</option>
-					<option value="Admine">Admine</option>
+					<option value="Customer">Customer</option>
+					<option value="Admin">Admin</option>
 				</select>
 				<span asp-validation-for="Role" class="text-danger"></span>
 				<i class="zmdi zmdi-caret-down" style="font-size: 17px"></i>
@@ -89,6 +88,3 @@
 	</div>
 </div>
 
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

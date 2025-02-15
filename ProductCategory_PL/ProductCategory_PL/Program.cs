@@ -28,7 +28,7 @@ builder.Services.AddControllersWithViews();
 //Injection For DataBase 
 builder.Services.AddDbContext<ProductContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 #endregion
@@ -49,8 +49,8 @@ builder.Services.AddScoped(typeof(IProductRepo), typeof(ProductRepo));
 
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>()
-    .AddEntityFrameworkStores<ProductContext>()
-    .AddDefaultTokenProviders();
+	.AddEntityFrameworkStores<ProductContext>()
+	.AddDefaultTokenProviders();
 
 // Configure Identity to use custom ApplicationUser and ApplicationRole with int keys
 //builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -64,36 +64,43 @@ builder.Services.AddCors(e => e.AddPolicy("Policy", e => e.AllowAnyOrigin().Allo
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 })
   .AddJwtBearer(options =>
   {
-      options.TokenValidationParameters = new TokenValidationParameters
-      {
-          ValidateIssuer = true,
-          ValidateAudience = true,
-          ValidateLifetime = true,
-          ValidateIssuerSigningKey = true,
-          ValidIssuer = builder.Configuration["JWT:issure"],
-          ValidAudience = builder.Configuration["JWT:audience"],
-          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:AuthKey"] ?? string.Empty)),
-          ClockSkew = TimeSpan.Zero
-      };
+	  options.TokenValidationParameters = new TokenValidationParameters
+	  {
+		  ValidateIssuer = true,
+		  ValidateAudience = true,
+		  ValidateLifetime = true,
+		  ValidateIssuerSigningKey = true,
+		  ValidIssuer = builder.Configuration["JWT:issure"],
+		  ValidAudience = builder.Configuration["JWT:audience"],
+		  IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:AuthKey"] ?? string.Empty)),
+		  ClockSkew = TimeSpan.Zero
+	  };
 
-      options.Events = new JwtBearerEvents
-      {
-          OnMessageReceived = context =>
-          {
-              if (context.Request.Cookies.ContainsKey("AuthToken"))
-              {
-                  context.Token = context.Request.Cookies["AuthToken"];
-              }
-              return Task.CompletedTask;
-          }
-      };
+	  options.Events = new JwtBearerEvents
+	  {
+		  OnMessageReceived = context =>
+		  {
+			  if (context.Request.Cookies.ContainsKey("AuthToken"))
+			  {
+				  context.Token = context.Request.Cookies["AuthToken"];
+			  }
+			  return Task.CompletedTask;
+		  }
+	  };
   });
+
+//Authrization 
+builder.Services.AddAuthorization(options =>
+{
+	options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+	options.AddPolicy("Student", policy => policy.RequireRole("Student"));
+});
 #endregion
 
 #region Auto Mapping 
@@ -109,15 +116,17 @@ builder.Services.AddSingleton<PictureUrlResolver>();
 
 #region logging 
 builder.Logging.ClearProviders();
-builder.Services.AddSingleton<ILoggingService, LoggingService>();
+//builder.Logging.AddConsole();
+//builder.Services.AddSingleton<ILoggingService, LoggingService>();
+builder.Services.AddSingleton(typeof(ILoggingService<>), typeof(LoggingService<>));
 var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 
 Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(configuration)
-    .WriteTo.Console()
-    .WriteTo.MSSqlServer(connectionString: configuration.GetConnectionString("DefaultConnection"),
-    sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs", AutoCreateSqlTable = true, AutoCreateSqlDatabase = true })
-    .WriteTo.Seq("http://localhost:7063/")
-    .CreateLogger();
+	.WriteTo.Console()
+	.WriteTo.MSSqlServer(connectionString: configuration.GetConnectionString("DefaultConnection"),
+	sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs", AutoCreateSqlTable = true, AutoCreateSqlDatabase = true })
+	.WriteTo.Seq("http://localhost:7063/")
+	.CreateLogger();
 
 builder.Host.UseSerilog();
 
@@ -141,20 +150,20 @@ var loggerFactory = services.GetRequiredService<ILoggerFactory>();
 try
 {
 
-    // Migrate Data 
-    await dbContext.Database.MigrateAsync();
-    // Seeding Data To Make Admin User 
-    var userId = await UserSeeding.UserDataSeeding(userManager, roleManager);
-    if (userId.HasValue)
-    {
-        var creationDate = DateTime.UtcNow;
-        await ProductsSeeding.SeedAsync(dbContext, userId.Value, creationDate);
-    }
+	// Migrate Data 
+	await dbContext.Database.MigrateAsync();
+	// Seeding Data To Make Admin User 
+	var userId = await UserSeeding.UserDataSeeding(userManager, roleManager);
+	if (userId.HasValue)
+	{
+		var creationDate = DateTime.UtcNow;
+		await ProductsSeeding.SeedAsync(dbContext, userId.Value, creationDate);
+	}
 }
 catch (Exception ex)
 {
-    var logger = loggerFactory.CreateLogger<Program>();
-    logger.LogError(ex, "An error happened during migration");
+	var logger = loggerFactory.CreateLogger<Program>();
+	logger.LogError(ex, "An error happened during migration");
 }
 #endregion
 
@@ -162,9 +171,9 @@ catch (Exception ex)
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+	app.UseExceptionHandler("/Home/Error");
+	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+	app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -177,7 +186,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("Policy");
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+	name: "default",
+	pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

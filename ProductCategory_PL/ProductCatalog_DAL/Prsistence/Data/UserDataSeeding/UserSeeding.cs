@@ -13,7 +13,6 @@ namespace ProductCatalog_DAL.Prsistence.Data.UserDataSeeding
 			{
 				var roleName = "Admin";
 
-				// Check if the role exists, if not, create it
 				if (!await roleManager.RoleExistsAsync(roleName))
 				{
 					var role = new IdentityRole<int> { Name = roleName };
@@ -36,10 +35,10 @@ namespace ProductCatalog_DAL.Prsistence.Data.UserDataSeeding
 				if (result.Succeeded)
 				{
 					await userManager.AddToRoleAsync(user, roleName);
-					return user.Id; // Return the created user's ID
+					return user.Id; 
 				}
 			}
-			return null; // Return null if no user was created
+			return null;
 		}
 	}
 }

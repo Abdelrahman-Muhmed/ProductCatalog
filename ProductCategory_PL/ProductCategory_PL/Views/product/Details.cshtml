@@ -5,44 +5,48 @@
 
 @model ProductCatalog_BLL.DTOs.ProductReturnDto
 
-    <div class="container mt-4">
-        <div class="card shadow-lg">
-            <div class="card-header bg-primary text-white">
-                <h4 class="text-center">Product Details</h4>
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h4 class="text-center">Product Details</h4>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-4 font-weight-bold">ID:</div>
+                <div class="col-md-8">@Model.Id</div>
             </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-4 font-weight-bold">ID:</div>
-                    <div class="col-md-8">@Model.Id</div>
+            <div class="row mb-3">
+                <div class="col-md-4 font-weight-bold">Name:</div>
+                <div class="col-md-8">@Model.Name</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 font-weight-bold">Description:</div>
+                <div class="col-md-8">@Model.Description</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 font-weight-bold">Picture:</div>
+                <div class="col-md-8 text-center">
+                    <img src="/Images/products/@Model.PictureUrl" 
+                         alt="@Model.Name" 
+                         class="img-fluid rounded shadow-sm" 
+                         style="max-width: 300px; max-height: 300px; object-fit: cover;" />
+                    <div class="mt-2 text-muted">@Model.PictureUrl</div>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-md-4 font-weight-bold">Name:</div>
-                    <div class="col-md-8">@Model.Name</div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-4 font-weight-bold">Description:</div>
-                    <div class="col-md-8">@Model.Description</div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-4 font-weight-bold">Picture:</div>
-                    <div class="col-md-8">
-                        <img src="@Model.PictureUrl" alt="@Model.Name" class="img-fluid" />
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-4 font-weight-bold">Price:</div>
-                    <div class="col-md-8">@Model.Price.ToString("C")</div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-4 font-weight-bold">Brand:</div>
-                    <div class="col-md-8">@Model.ProductBrand</div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-4 font-weight-bold">Category:</div>
-                    <div class="col-md-8">@Model.CategoryName</div>
-                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 font-weight-bold">Price:</div>
+                <div class="col-md-8">@Model.Price.ToString("C")</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 font-weight-bold">Brand:</div>
+                <div class="col-md-8">@Model.ProductBrand</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 font-weight-bold">Category:</div>
+                <div class="col-md-8">@Model.CategoryName</div>
             </div>
         </div>
     </div>
+</div>
 
-
+@* <script src="~/js/products.js"></script> in Layout *@ 

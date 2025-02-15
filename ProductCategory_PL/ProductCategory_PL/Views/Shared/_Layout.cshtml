@@ -144,7 +144,7 @@
 			TempData.Keep();
 			string? currentPage = ViewContext.HttpContext.Request.Path;
 		    string userName = User.Identity.IsAuthenticated ? User.Identity.Name : "";
-
+			bool isAdmin = User.IsInRole("Admin");
 		}
 
 		<div class="dashboard">
@@ -167,11 +167,15 @@
 									<div>Products Home</div>
 								</a>
 							</li>
-							<li class="menu-item @(currentPage == "/product/AddUpdate" ? "active" : "")">
-								<a asp-controller="product" asp-action="AddUpdate" class="menu-link">
-									<div>Add Products</div>
-								</a>
-							</li>
+							@if (isAdmin)
+							{
+								<li class="menu-item @(currentPage == "/product/AddUpdate" ? "active" : "")">
+									<a asp-controller="product" asp-action="AddUpdate" class="menu-link">
+										<div>Add Products</div>
+									</a>
+								</li>
+							}
+						
 						</ul>
 					</li>
 
@@ -202,9 +206,8 @@
 	<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 	<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
-	<script src="~/css/datatable/js/datatable.jquery.min.js"></script>
-	<script src="~/css/datatables.net-buttons/js/datatables.buttons.min.js"></script>
-	<script src="~/css/datatables.net-bs4/datatables.bootstrap4.min.js"></script>
+
+	@* <script src="~/css/datatables.net-bs4/datatables.bootstrap4.min.js"></script> *@
 	<script src="~/css/sweetalert2/sweetalert2.all.min.js"></script>
 	<script src="~/css/sweetalert2/sweetalert2.esm.all.min.js"></script>
 	<script src="~/css/sweetalert2/sweetalert2.esm.min.js"></script>
@@ -212,10 +215,14 @@
 	<script src="~/css/toastr.js/toastr.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/datatables.min.js"></script>
 	<script src="~/js/products.js"></script>
-
+	
 @* 	<script src="~/js/site.js" asp-append-version="true"></script> *@
 	@* @await RenderSectionAsync("Scripts", required: false) *@
-
+	@section Scripts {
+		@{
+			await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		}
+	}
 
 </body>
 

@@ -111,24 +111,6 @@ namespace ProductCatalog_PL.Controllers
         }
 
 
-      
-        //[Authorize]
-        //[HttpGet("getUser")]
-        //public async Task<ActionResult<UserDto>> GetUserName()
-        //{
-        //    //The User Here Coming From ControllerBase 
-        //    var email = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
-        //    var user = await _userManager.FindByEmailAsync(email);
-
-        //    return Ok(new UserDto()
-        //    {
-        //        Name = user.firstName,
-        //        Email = user.Email,
-        //        Token = await _authServic.CreateTokenAsync(user, _userManager)
-        //    });
-        //}
-
-
 		[HttpPost]
 		public async Task<IActionResult> Logout()
 		{

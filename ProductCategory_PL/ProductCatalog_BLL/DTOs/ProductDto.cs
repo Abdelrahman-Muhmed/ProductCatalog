@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using ProductCatalog_BLL.Helpers.AllowedExtention;
 using System.ComponentModel.DataAnnotations;
 
 namespace ProductCatalog_BLL.DTOs
@@ -6,7 +7,6 @@ namespace ProductCatalog_BLL.DTOs
     public class ProductDto
 	{
         public int? Id { get; set; }
-		public int ProductId { get; set; }
 
 
 		[Required(ErrorMessage = "Name is required.")]
@@ -33,7 +33,8 @@ namespace ProductCatalog_BLL.DTOs
         [Required(ErrorMessage = "CategoryId is required.")]
 		public int CategoryId { get; set; }
 
-        public IFormFile? ImageFile { get; set; }
-        //public string? ExistingImagePath { get; set; }
-    }
+		[ValidateFile(new string[] { ".jpg", ".jpeg", ".png" }, 1, ErrorMessage = "Invalid file. Only .jpg, .jpeg, .png files under 1 MB are allowed.")]
+		public IFormFile? ImageFile { get; set; }
+		//public string? ExistingImagePath { get; set; }
+	}
 }

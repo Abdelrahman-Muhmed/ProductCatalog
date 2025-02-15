@@ -1,6 +1,6 @@
 ﻿namespace ProductCatalog_BLL.IService
 {
-    public interface ILoggingService
+    public interface ILoggingService<T>
     {
         void LogInformation(string message);
         void LogWarning(string message);

@@ -4,10 +4,10 @@ using ProductCatalog_BLL.IService;
 namespace ProductCatalog_Service.ServiceRepo
 {
 
-    public class LoggingService : ILoggingService
+    public class LoggingService<T> : ILoggingService<T> 
     {
-        private readonly ILogger<LoggingService> _logger;
-        public LoggingService(ILogger<LoggingService> logger)
+        private readonly ILogger<T> _logger;
+        public LoggingService(ILogger<T> logger)
         {
             _logger = logger;
         }
