@@ -9,35 +9,35 @@ namespace ProductCatalog_BLL.Helpers.Encryption
 {
     public class EncryptionHelper
     {
-        public static string EncryptString(string key, string plainText)
-        {
+        //public static string EncryptString(string key, string plainText)
+        //{
 
-            byte[] iv = new byte[16];
-            byte[] array;
+        //    byte[] iv = new byte[16];
+        //    byte[] array;
 
-            using (Aes aes = Aes.Create())
-            {
-                aes.Key = Encoding.UTF8.GetBytes(key);
-                aes.IV = iv;
+        //    using (Aes aes = Aes.Create())
+        //    {
+        //        aes.Key = Encoding.UTF8.GetBytes(key);
+        //        aes.IV = iv;
 
-                ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+        //        ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
 
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write))
-                    {
-                        using (StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
-                        {
-                            streamWriter.Write(plainText);
-                        }
+        //        using (MemoryStream memoryStream = new MemoryStream())
+        //        {
+        //            using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write))
+        //            {
+        //                using (StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
+        //                {
+        //                    streamWriter.Write(plainText);
+        //                }
 
-                        array = memoryStream.ToArray();
-                    }
-                }
-            }
+        //                array = memoryStream.ToArray();
+        //            }
+        //        }
+        //    }
 
-            return Convert.ToBase64String(array);
-        }
+        //    return Convert.ToBase64String(array);
+        //}
         public static string DecryptString(string cipherText)
         {
             var key = "b14ca5898a4e4133bbce2ea2315a1916";

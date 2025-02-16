@@ -42,13 +42,13 @@ namespace ProductCatalog_PL.Controllers
 
 
         }
-		[Authorize(Roles = "Admin,Customer")]
-		public IActionResult Home()
+        [Authorize(Roles = "Admin,Customer")]
+        public IActionResult Home()
         {
             return View();
 
         }
-		public IActionResult GetAll()
+        public IActionResult GetAll()
         {
             // Using Repository for products to get all products with specific columns
             var dataRows = _productRepo.GetAllProductsAsync();
@@ -58,14 +58,30 @@ namespace ProductCatalog_PL.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddUpdate(int? id)
+        public async Task<IActionResult> AddUpdate(string id)
         {
             ProductDto productDto = new ProductDto();
-            if (id != null)
+            if (!string.IsNullOrEmpty(id))
             {
+				
 
-                //using Repository for products to get all products with specific columns
-                var product = await _productRepo.GetAsync(id);
+				string decryptedId;
+				try
+				{
+					decryptedId = EncryptionHelper.DecryptString(id);
+				}
+				catch
+				{
+					return BadRequest("Invalid product ID.");
+				}
+
+				if (!int.TryParse(decryptedId, out int productId))
+				{
+					return BadRequest("Invalid product ID.");
+				}
+
+				//using Repository for products to get all products with specific columns
+				var product = await _productRepo.GetAsync(productId);
                 if (product == null)
                 {
                     return NotFound("Product not found.");
@@ -73,7 +89,7 @@ namespace ProductCatalog_PL.Controllers
                 if (product.ProductCategory != null && product.ProductBrand != null)
                 {
                     productDto = _mapper.Map<ProductDto>(product);
-                    productDto.Id = id;
+                    productDto.Id = productId;
                     var selecCategorytListItemsUp = await _genericCategoryRepository.GetAllAsync();
                     ViewData["BrandId"] = new SelectList(selecCategorytListItemsUp, "Id", "Name", product.ProductCategory.Name);
 
@@ -102,35 +118,16 @@ namespace ProductCatalog_PL.Controllers
             if (!ModelState.IsValid)
             {
                 return View(productDto);
-			}
+            }
 
-			if (productDto.Id != null)
+            if (productDto.Id != null)
+            {
+                var product = await _productRepo.GetAsync(productDto.Id);
+                if (product != null)
                 {
-                    var product = await _productRepo.GetAsync(productDto.Id);
-                    if (product != null)
-                    {
-                        string filePath = await _productService.UpdatePicture(productDto, product);
+                    string filePath = await _productService.UpdatePicture(productDto, product);
 
-                        product = _mapper.Map(productDto, product);
-                        product.PictureUrl = filePath;
-                        product.creationDate = DateTime.Now;
-
-                        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                        if (userId != null)
-                        {
-                            product.createdBy = int.Parse(userId);
-                        }
-
-                        await _genericRepository.UpdateAsync(product);
-
-                        return RedirectToAction("Home");
-                    }
-                    return NotFound("Product not found.");
-                }
-                else
-                {
-                    string filePath = await _productService.AddPicture(productDto);
-                    Products product = _mapper.Map<Products>(productDto);
+                    product = _mapper.Map(productDto, product);
                     product.PictureUrl = filePath;
                     product.creationDate = DateTime.Now;
 
@@ -140,96 +137,138 @@ namespace ProductCatalog_PL.Controllers
                         product.createdBy = int.Parse(userId);
                     }
 
-                    await _genericRepository.AddAsync(product);
+                    await _genericRepository.UpdateAsync(product);
+
                     return RedirectToAction("Home");
                 }
-
-
-        }
-        [HttpGet]
-        [Authorize(Roles = "Admin,Customer")]
-        public async Task<IActionResult> Details(int? id)
-        {
-            var product = await _productRepo.GetAsync(id);
-            if (product == null)
-            {
                 return NotFound("Product not found.");
             }
-            var ProductMapp = _mapper.Map<Products, ProductReturnDto>(product);
-            return View(ProductMapp);
+            else
+            {
+                string filePath = await _productService.AddPicture(productDto);
+                Products product = _mapper.Map<Products>(productDto);
+                product.PictureUrl = filePath;
+                product.creationDate = DateTime.Now;
+
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userId != null)
+                {
+                    product.createdBy = int.Parse(userId);
+                }
+
+                await _genericRepository.AddAsync(product);
+                return RedirectToAction("Home");
+            }
+
 
         }
 
-
+        //Without Encrypt 
         //[HttpGet]
         //[Authorize(Roles = "Admin,Customer")]
-        //public async Task<IActionResult> Details(string id)
+        //public async Task<IActionResult> Details(int? id)
         //{
-        //    if (string.IsNullOrEmpty(id))
-        //    {
-        //        return NotFound("Product not found.");
-        //    }
-
-        //    string decryptedId;
-        //    try
-        //    {
-        //        decryptedId = EncryptionHelper.DecryptString(id);
-        //    }
-        //    catch
-        //    {
-        //        return BadRequest("Invalid product ID.");
-        //    }
-
-        //    if (!int.TryParse(decryptedId, out int productId))
-        //    {
-        //        return BadRequest("Invalid product ID.");
-        //    }
-
-        //    var product = await _productRepo.GetAsync(productId);
+        //    var product = await _productRepo.GetAsync(id);
         //    if (product == null)
         //    {
         //        return NotFound("Product not found.");
         //    }
+        //    var ProductMapp = _mapper.Map<Products, ProductReturnDto>(product);
+        //    return View(ProductMapp);
 
-        //    var productMapp = _mapper.Map<Products, ProductReturnDto>(product);
-        //    return View(productMapp);
         //}
 
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<JsonResult> Delete(int id)
+        //With Encrypt 
+        [HttpGet]
+        [Authorize(Roles = "Admin,Customer")]
+        public async Task<IActionResult> Details(string id)
         {
-            if (ModelState.IsValid)
+            if (string.IsNullOrEmpty(id))
             {
-                try
-                {
-                    var delete = await _genericRepository.DeleteAsync(id);
-                    if (delete is null)
-                        return Json(new { isValid = false, message = "Not Found This Product" });
-
-                    return Json(new { isValid = true, message = "Deleted Successfully" });
-                }
-                catch
-                {
-                    return Json(new { isValid = false, message = "An error occurred while deleting" });
-                }
+                return NotFound("Product not found.");
             }
-            return Json(new { isValid = false, message = "Invalid Data" });
+
+            string decryptedId;
+            try
+            {
+                decryptedId = EncryptionHelper.DecryptString(id);
+            }
+            catch
+            {
+                return BadRequest("Invalid product ID.");
+            }
+
+            if (!int.TryParse(decryptedId, out int productId))
+            {
+                return BadRequest("Invalid product ID.");
+            }
+
+            var product = await _productRepo.GetAsync(productId);
+            if (product == null)
+            {
+                return NotFound("Product not found.");
+            }
+
+            var productMapp = _mapper.Map<Products, ProductReturnDto>(product);
+            return View(productMapp);
         }
 
 
-        //[HttpGet("{id}")]
-        //[Authorize(Roles = "Admin")]
-        //public async Task<ActionResult<ProductReturnDto>> GetProductAsync(int id)
-        //{
-        //	//using Repository for products to get all products with specific columns
-        //	var product = await _productRepo.GetAsync(id);
-        //	if (product == null)
-        //		return NotFound();
-        //	var ProductMapp = _mapper.Map<Products, ProductReturnDto>(product);
-        //	return Ok(ProductMapp);
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound("Product not found.");
+            }
 
-        //}
-    }
+            string decryptedId;
+            try
+            {
+                decryptedId = EncryptionHelper.DecryptString(id);
+            }
+            catch
+            {
+                return BadRequest("Invalid product ID.");
+            }
+
+            if (!int.TryParse(decryptedId, out int productId))
+            {
+                return BadRequest("Invalid product ID.");
+            }
+
+
+            try
+            {
+                var delete = await _genericRepository.DeleteAsync(productId);
+                if (delete is null)
+                    return Json(new { isValid = false, message = "Not Found This Product" });
+
+                return Json(new { isValid = true, message = "Deleted Successfully" });
+            }
+            catch
+            {
+                return Json(new { isValid = false, message = "An error occurred while deleting" });
+            }
+
+
+		}
+
+
+
+		//[HttpGet("{id}")]
+		//[Authorize(Roles = "Admin")]
+		//public async Task<ActionResult<ProductReturnDto>> GetProductAsync(int id)
+		//{
+		//	//using Repository for products to get all products with specific columns
+		//	var product = await _productRepo.GetAsync(id);
+		//	if (product == null)
+		//		return NotFound();
+		//	var ProductMapp = _mapper.Map<Products, ProductReturnDto>(product);
+		//	return Ok(ProductMapp);
+
+		//}
+	}
 
 }

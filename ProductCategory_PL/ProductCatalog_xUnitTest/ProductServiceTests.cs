@@ -21,7 +21,6 @@ public class ProductRepoTests
 	[Fact]
 	public async Task GetAllProductsAsync_ReturnsAllProducts()
 	{
-		// Arrange
 		var options = GetInMemoryOptions();
 		using (var context = new ProductContext(options))
 		{
@@ -36,10 +35,10 @@ public class ProductRepoTests
 		{
 			var repo = new ProductRepo(context);
 
-			// Act
+		
 			var products = await repo.GetAllProductsAsync();
 
-			// Assert
+			
 			Assert.NotNull(products);
 			Assert.Equal(2, products.Count);
 		}
@@ -48,7 +47,6 @@ public class ProductRepoTests
 	[Fact]
 	public async Task GetAsync_ReturnsProduct_WhenProductExists()
 	{
-		// Arrange
 		var options = GetInMemoryOptions();
 		using (var context = new ProductContext(options))
 		{
@@ -60,10 +58,10 @@ public class ProductRepoTests
 		{
 			var repo = new ProductRepo(context);
 
-			// Act
+			
 			var product = await repo.GetAsync(1);
 
-			// Assert
+			
 			Assert.NotNull(product);
 			Assert.Equal(1, product.Id);
 			Assert.Equal("Product 1", product.Name);
@@ -73,16 +71,15 @@ public class ProductRepoTests
 	[Fact]
 	public async Task GetAsync_ReturnsNull_WhenProductDoesNotExist()
 	{
-		// Arrange
+	
 		var options = GetInMemoryOptions();
 		using (var context = new ProductContext(options))
 		{
 			var repo = new ProductRepo(context);
 
-			// Act
-			var product = await repo.GetAsync(99); // Non-existent ID
+			var product = await repo.GetAsync(99); 
 
-			// Assert
+			
 			Assert.Null(product);
 		}
 	}
