@@ -72,7 +72,7 @@ function InitializeDatatable() {
             { data: 'price', title: 'Price' },
             { data: 'productCategory.name', title: 'Product Category' },
             { data: 'productBrand.name', title: 'Product Brand' },
-            { data: 'Actions', responsivePriority: -1, className: 'actions' }
+            { title: 'Actions', orderable: false } 
         ],
         columnDefs: [
             {
@@ -86,46 +86,43 @@ function InitializeDatatable() {
                 targets: -1,
                 title: 'Actions',
                 orderable: false,
-                render: function (data, type, row, meta) {
-                    let cellContent = "Encrypting...";
-
+                data: null, // I will use  `null` because this column doesn't rely on a specific field in the data source
+                createdCell: function (td, cellData, rowData, row, col) {
                     // Encrypt the row ID asynchronously
-                    encryptId(row.id)
+                    encryptId(rowData.id)
                         .then(encryptedId => {
-                            const cell = table
-                                .DataTable()
-                                .cell(meta.row, meta.col)
-                                .node();
-                            console.log(encryptedId)
+                            // Generate the actions HTML based on the encrypted ID and userRole
                             const actionsHtml = userRole
                                 ? `
-                                    <div class="btn-group" role="group" aria-label="Actions">
-                                        <a href="/product/AddUpdate/${encryptedId}" class="btn btn-sm btn-primary" title="Update">
-                                            <i class="fas fa-edit"></i> Update
-                                        </a>
-                                        <a href="javascript:void(0);" onclick="deleteRow('${row.id}')" class="btn btn-sm btn-danger" title="Delete">
-                                            <i class="fas fa-trash-alt"></i> Delete
-                                        </a>
-                                        <a href="/product/Details/${encryptedId}" class="btn btn-sm btn-warning" title="Details">
-                                            <i class="fas fa-info-circle"></i> Details
-                                        </a>
-                                    </div>
-                                `
+                        <div class="btn-group" role="group" aria-label="Actions">
+                            <a href="/product/AddUpdate/${encryptedId}" class="btn btn-sm btn-primary" title="Update">
+                                <i class="fas fa-edit"></i> Update
+                            </a>
+                            <a href="javascript:void(0);" onclick="deleteRow('${encryptedId}')" class="btn btn-sm btn-danger" title="Delete">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </a>
+                            <a href="/product/Details/${encryptedId}" class="btn btn-sm btn-warning" title="Details">
+                                <i class="fas fa-info-circle"></i> Details
+                            </a>
+                        </div>
+                    `
                                 : `
-                                    <a href="/product/Details/${encryptedId}" class="btn btn-sm btn-warning" title="Details">
-                                        <i class="fas fa-info-circle"></i> Details
-                                    </a>
-                                `;
+                        <a href="/product/Details/${encryptedId}" class="btn btn-sm btn-warning" title="Details">
+                            <i class="fas fa-info-circle"></i> Details
+                        </a>
+                    `;
 
-                            $(cell).html(actionsHtml);
+                            $(td).html(actionsHtml);
                         })
                         .catch(error => {
                             console.error("Encryption Error:", error);
+                            $(td).html('<span class="text-danger">Error</span>'); 
                         });
 
-                    return cellContent; // Placeholder
+                    $(td).html('');
                 }
             }
+
         ],
         order: [[0, "asc"]],
     });
