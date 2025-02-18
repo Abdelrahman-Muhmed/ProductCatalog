@@ -125,7 +125,7 @@ Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(configuration)
 	.WriteTo.Console()
 	.WriteTo.MSSqlServer(connectionString: configuration.GetConnectionString("DefaultConnection"),
 	sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs", AutoCreateSqlTable = true, AutoCreateSqlDatabase = true })
-	.WriteTo.Seq("http://localhost:7063/")
+	.WriteTo.Seq("http://localhost:5341/")
 	.CreateLogger();
 
 builder.Host.UseSerilog();

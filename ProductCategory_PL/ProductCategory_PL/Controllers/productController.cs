@@ -112,7 +112,8 @@ namespace ProductCatalog_PL.Controllers
             return View(productDto);
         }
 
-        [Authorize(Roles = "Admin")]
+		[HttpPost]
+		[Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddUpdate(ProductDto productDto)
         {
             if (!ModelState.IsValid)
@@ -137,9 +138,9 @@ namespace ProductCatalog_PL.Controllers
                         product.createdBy = int.Parse(userId);
                     }
 
-                    await _genericRepository.UpdateAsync(product);
+					await _productService.UpdateProductAsync(product);
 
-                    return RedirectToAction("Home");
+					return RedirectToAction("Home");
                 }
                 return NotFound("Product not found.");
             }
@@ -155,9 +156,8 @@ namespace ProductCatalog_PL.Controllers
                 {
                     product.createdBy = int.Parse(userId);
                 }
-
-                await _genericRepository.AddAsync(product);
-                return RedirectToAction("Home");
+				await _productService.AddProductAsync(product);
+				return RedirectToAction("Home");
             }
 
 
@@ -241,9 +241,9 @@ namespace ProductCatalog_PL.Controllers
 
             try
             {
-                var delete = await _genericRepository.DeleteAsync(productId);
-                if (delete is null)
-                    return Json(new { isValid = false, message = "Not Found This Product" });
+				bool isDeleted = await _productService.DeleteProductAsync(productId);
+				if (!isDeleted)
+					return Json(new { isValid = false, message = "Not Found This Product" });
 
                 return Json(new { isValid = true, message = "Deleted Successfully" });
             }

@@ -8,17 +8,17 @@ namespace ProductCatalog_DAL.IRepository
         Task<T?> GetAsync(int? id);
         Task<IReadOnlyList<T>> GetAllAsync();
 
-		Task<T> AddAsync(T entity);
+		//Task<T> Add(T entity);
 
-		Task<T> DeleteAsync(int id);
+		//Task<T> Update(int id);
 
-		Task<T> UpdateAsync(T entity);
+		//Task<T> Delete(T entity);
 
-		//void Add(T entity);
+		void Add(T entity);
 
-		//void Update(T entity);
+		void Update(T entity);
 
-		//void Delete(T entity);
+		void Delete(T entity);
 
 
 

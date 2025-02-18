@@ -27,27 +27,14 @@ namespace ProductCatalog_DAL.Repository
 			return await _dbContext.Set<T>().FindAsync(id);
 		}
 
-		public async Task<T> AddAsync(T entity)
-		{
-			await _dbContext.AddAsync(entity);
-			return entity;
-		}
+		public void Add(T entity)
+		 => _dbContext.Set<T>().Add(entity);
 
-		public async Task<T> DeleteAsync(int id)
-		{
-			var entity = await GetAsync(id);
-			if (entity != null)
-			{
-				_dbContext.Set<T>().Remove(entity);
-			}
-			return entity;
-		}
+		public void Update(T entity)
+		=> _dbContext.Set<T>().Update(entity);
 
-		public async Task<T> UpdateAsync(T entity)
-		{
-			_dbContext.Set<T>().Update(entity);
-			return entity;
-		}
+		public void Delete(T entity)
+		=> _dbContext.Set<T>().Remove(entity);
 
 
 
