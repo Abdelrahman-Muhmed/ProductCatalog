@@ -118,6 +118,11 @@ namespace ProductCatalog_PL.Controllers
         {
             if (!ModelState.IsValid)
             {
+                var selecCategorytListItemsUp = await _genericCategoryRepository.GetAllAsync();
+                ViewData["CategoryId"] = new SelectList(selecCategorytListItemsUp, "Id", "Name", productDto.CategoryId);
+
+                var selecBrandtListItemsUp = await _genericBrandRepository.GetAllAsync();
+                ViewData["BrandId"] = new SelectList(selecBrandtListItemsUp, "Id", "Name", productDto.BrandId);
                 return View(productDto);
             }
 

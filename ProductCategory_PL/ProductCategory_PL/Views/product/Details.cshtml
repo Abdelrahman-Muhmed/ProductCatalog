@@ -11,10 +11,10 @@
             <h4 class="text-center">Product Details</h4>
         </div>
         <div class="card-body">
-            <div class="row mb-3">
+           @*  <div class="row mb-3">
                 <div class="col-md-4 font-weight-bold">ID:</div>
                 <div class="col-md-8">@Model.Id</div>
-            </div>
+            </div> *@
             <div class="row mb-3">
                 <div class="col-md-4 font-weight-bold">Name:</div>
                 <div class="col-md-8">@Model.Name</div>
@@ -24,13 +24,16 @@
                 <div class="col-md-8">@Model.Description</div>
             </div>
             <div class="row mb-3">
+                <div class="col-md-4 font-weight-bold">Start Date:</div>
+                <div class="col-md-8">@Model.StartDate</div>
+            </div>
+            <div class="row mb-3">
                 <div class="col-md-4 font-weight-bold">Picture:</div>
                 <div class="col-md-8 text-center">
-                    <img src="/Images/products/@Model.PictureUrl" 
+                    <img src="@Model.PictureUrl" 
                          alt="@Model.Name" 
                          class="img-fluid rounded shadow-sm" 
                          style="max-width: 300px; max-height: 300px; object-fit: cover;" />
-                    <div class="mt-2 text-muted">@Model.PictureUrl</div>
                 </div>
             </div>
             <div class="row mb-3">

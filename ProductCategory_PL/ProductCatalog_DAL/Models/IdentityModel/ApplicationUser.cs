@@ -10,6 +10,6 @@ namespace ProductCatalog_DAL.Models.IdentityModel
         public string country { get; set; } = null!;
         public string? street { get; set; }
         public string? city { get; set; }
-        public string? PersonalImage { get; set; }
+
     }
 }

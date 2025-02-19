@@ -1,9 +1,16 @@
 ﻿ @model ProductCatalog_BLL.DTOs.ProductDto;
-
-<div class="container my-5">
+@{
+    var header = "Add Product";
+    if (Model != null && Model.Id != null)
+    {
+        header = "Update Product";
+    }
+    
+}
+    <div class="container my-5">
     <div class="card shadow-lg rounded-4">
         <div class="card-header bg-primary text-white text-center">
-            <h1 class="h3">Add Product</h1>
+            <h1 class="h3">@header</h1>
         </div>
         <div class="card-body"> 
             <form asp-controller="product" asp-action="AddUpdate" method="post" enctype="multipart/form-data">
@@ -58,12 +65,18 @@
                     <label for="startDate" class="form-label">Start Date</label>
                     <input type="date" asp-for="startDate" class="form-control rounded-3" id="startDate" >
                 </div>
-
+                <div class="mb-2">
+                    <span asp-validation-for="startDate" class="text-danger"></span>
+                </div>
 
                 <div class="mb-3">
                     <label for="duration" class="form-label">Duration (days)</label>
                     <input type="number" asp-for="Duration" class="form-control rounded-3" id="duration" placeholder="Enter duration in days" >
                 </div>
+                <div class="mb-2">
+                    <span asp-validation-for="Duration" class="text-danger"></span>
+                </div>
+
                 <div class="mb-3">
                     <label for="image" class="form-label">Product Image</label>
                     <input type="file" asp-for="ImageFile" class="form-control rounded-3" id="image" accept=".jpg,.jpeg,.png">
@@ -72,6 +85,7 @@
                 <div class="mb-2">
                     <span asp-validation-for="ImageFile" class="text-danger"></span>
                 </div>
+             
                 <button class="btn btn-primary w-100 rounded-3">
                    Save
                 </button>
